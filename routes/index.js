@@ -8,6 +8,6 @@ router.post(`/register`, authController.register);
 router.post(`/login`, authController.login);
 router.post(`/logout`, authController.logout);
 
-router.use('/users', user);
+router.use('/user', user);
 
 export default router;

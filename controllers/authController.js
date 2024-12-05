@@ -40,15 +40,15 @@ async function register(req, res)
 
 async function login(req, res)
 {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    try 
+    try
     {
-        let user = await User.findOne({ email });
+        let user = await User.findOne({ username });
 
         if (!user)
         {
-            res.status(401).send('Wrong email or password');
+            res.status(401).send('Wrong username or password');
             return;
         }
 
@@ -56,7 +56,7 @@ async function login(req, res)
 
         if (!isValidPassword)
         {
-            res.status(401).send('Wrong email or password');
+            res.status(401).send('Wrong username or password');
             return;
         }
 
@@ -76,7 +76,7 @@ function logout(req, res)
 {
     try
     {
-        res.clearCookie(AUTH_COOKIE_NAME);
+        res.clearCookie(AUTH_COOKIE_NAME).status(204).send(`Logged out!`);
     }
     catch (error)
     {
@@ -87,8 +87,7 @@ function logout(req, res)
 function generateToken(user)
 {
     const payload = {
-        _id: user._id,
-        username: user.username,
+        _id: user._id
     };
 
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: `1d` });
@@ -96,18 +95,30 @@ function generateToken(user)
     return token;
 }
 
-function getUserProfile(req, res)
+// Acts as both user details page, and updating the navbar on page refresh 
+async function getUserProfile(req, res)
 {
-    const { _id: userId } = req.user;
+    const token = req.cookies[AUTH_COOKIE_NAME];
+
+    // Send status 401 so maybe we will redirect to the login page if there is no user (cookie)
+    // if (!token) res.status(401).send();
+    // For now just end the request without status of 401 so it doesnt go to error page
+    if (!token) return res.send();
+
+    const decodedToken = jwt.verify(token, JWT_SECRET);
 
     try
     {
-        return User.findOne();
+        const user = await User.findById({ _id: decodedToken._id });
+
+        console.log(user);
+
+        res.status(200).send(user);
     }
     catch (error)
     {
-
+        res.send();
     }
 }
 
-export default { register, login, logout };
+export default { register, login, logout, getUserProfile };
