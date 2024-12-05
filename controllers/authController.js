@@ -14,17 +14,17 @@ async function register(req, res)
 
         if (user)
         {
-            res.status(409).send({ message: `This username or email is already registered!` });
+            res.status(409).send(`This username or email is already registered!`);
             return;
         }
 
         if (password !== rePassword)
         {
-            res.status(409).send({ message: `Password mismatch!` });
+            res.status(409).send(`Password mismatch!`);
             return;
         }
 
-        const newUser = await User.create({ username, email, password });
+        let newUser = await User.create({ username, email, password });
 
         const token = generateToken(newUser);
 
@@ -44,19 +44,19 @@ async function login(req, res)
 
     try 
     {
-        const user = await User.findOne({ username });
+        let user = await User.findOne({ username });
 
         if (!user)
         {
-            res.status(401).send({ message: 'Wrong email or password' });
+            res.status(401).send('Wrong email or password');
             return;
         }
 
-        const isValidPass = await bcrypt.compare(password, user.password);
+        const isValidPassword = await bcrypt.compare(password, user.password);
 
-        if (!isValidPass)
+        if (!isValidPassword)
         {
-            res.status(401).send({ message: 'Wrong email or password' });
+            res.status(401).send('Wrong email or password');
             return;
         }
 
@@ -80,7 +80,7 @@ function logout(req, res)
     }
     catch (error)
     {
-        res.send(error.message);
+        res.send(error);
     }
 }
 
@@ -94,6 +94,20 @@ function generateToken(user)
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: `1d` });
 
     return token;
+}
+
+function getUserProfile(req, res)
+{
+    const { _id: userId } = req.user;
+
+    try
+    {
+        return User.findOne();
+    }
+    catch (error)
+    {
+
+    }
 }
 
 export default { register, login, logout };
