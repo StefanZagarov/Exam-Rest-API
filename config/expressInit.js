@@ -1,5 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import { JWT_SECRET } from '../constants.js';
 
 export default function expressInit(app)
 {
@@ -8,5 +9,5 @@ export default function expressInit(app)
 
     app.use(express.json());
 
-    app.use(cookieParser());
+    app.use(cookieParser(JWT_SECRET));
 }
