@@ -50,12 +50,12 @@ async function getAllSongs(req, res, next, filter = ``)
 
 async function getSong(req, res)
 {
-    const { songId } = req.body;
+    // Because of `activatedRoute.snapshot.params[`songId`]` we send a params and not a body property
+    const { songId } = req.params;
 
     try
     {
         const song = await Song.findById(songId).populate(`createdBy`);
-
         res.status(200).send(song);
     }
     catch (error)
