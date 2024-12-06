@@ -54,7 +54,22 @@ async function getAllBands(req, res, next, filter = ``)
     {
         res.status(401).send(error);
     }
+}
 
+async function getBand(req, res)
+{
+    // Because of `activatedRoute.snapshot.params[`bandId`]` we send a params and not a body property
+    const { bandId } = req.params;
+
+    try
+    {
+        const band = await Band.findById(bandId).populate(`createdBy`);
+        res.status(200).send(band);
+    }
+    catch (error)
+    {
+        res.status(401).send(error);
+    }
 }
 
 // function capitalizeWord(input)
@@ -65,4 +80,4 @@ async function getAllBands(req, res, next, filter = ``)
 //         .join(' ');
 // }
 
-export default { getAllBands, createBand };
+export default { getAllBands, createBand, getBand };
