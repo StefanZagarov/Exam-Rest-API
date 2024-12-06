@@ -12,8 +12,6 @@ export default async function auth(req, res, next)
     {
         const decodedToken = jwt.verify(token, JWT_SECRET);
 
-        console.log(decodedToken);
-
         const user = await User.findById(decodedToken._id);
 
         req.user = user;

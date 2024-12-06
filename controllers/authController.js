@@ -111,8 +111,6 @@ async function getUserProfile(req, res)
     {
         const user = await User.findById({ _id: decodedToken._id });
 
-        console.log(user);
-
         res.status(200).send(user);
     }
     catch (error)
