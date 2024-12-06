@@ -6,10 +6,6 @@ import jwt from 'jsonwebtoken';
 async function createBand(req, res)
 {
     let { name, origin, genres, members, description } = req.body;
-    name = capitalizeWord(name);
-    origin = capitalizeWord(origin);
-    genres = capitalizeWord(genres);
-    members = capitalizeWord(members);
 
     try
     {
@@ -17,7 +13,7 @@ async function createBand(req, res)
 
         if (band)
         {
-            res.status(409).send(`Band is already added!`);
+            res.status(409).send(`Band has already been added!`);
             return;
         }
 
@@ -32,17 +28,41 @@ async function createBand(req, res)
     }
     catch (error)
     {
-        console.log(error);
-        res.send(error);
+        res.status(401).send(error);
     }
 }
 
-function capitalizeWord(input)
+async function getAllBands(req, res, next, filter = ``)
 {
-    return input
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
+    try
+    {
+        const query = await Band.find().populate(`createdBy`);
+
+        if (filter.name)
+        {
+            query.find({ name: { $regex: filter.name, $options: `i` } });
+        }
+
+        if (filter.genre)
+        {
+            query.find({ platform: filter.platform });
+        }
+
+        res.status(200).send(query);
+    }
+    catch (error)
+    {
+        res.status(401).send(error);
+    }
+
 }
 
-export default { createBand };
+// function capitalizeWord(input)
+// {
+//     return input
+//         .split(' ')
+//         .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+//         .join(' ');
+// }
+
+export default { getAllBands, createBand };

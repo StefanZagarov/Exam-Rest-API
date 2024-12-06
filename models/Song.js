@@ -1,12 +1,7 @@
-import { Schema, Types, model } from 'mongoose';
+import { model, Types, Schema } from 'mongoose';
 
-const bandSchema = new Schema({
+const songSchema = new Schema({
     name: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    origin: {
         type: String,
         required: true
     },
@@ -14,14 +9,15 @@ const bandSchema = new Schema({
         type: String,
         required: true
     },
-    members: {
+    band: {
         type: String,
         required: true
     },
-    description: {
+    length: {
         type: String,
         required: true
     },
+    lyrics: String,
     createdBy: {
         type: Types.ObjectId,
         ref: `User`
@@ -32,6 +28,6 @@ const bandSchema = new Schema({
     }]
 });
 
-const Band = model(`Band`, bandSchema);
+const Song = model(`Song`, songSchema);
 
-export default Band;
+export default Song;
