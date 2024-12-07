@@ -48,6 +48,22 @@ async function getAllSongs(req, res, next, filter = ``)
     }
 }
 
+async function getAllSongsByLikes(req, res, next, filter = ``)
+{
+    try
+    {
+        const allSongs = await Song.find().populate(`createdBy`);
+
+        const songsByLikes = allSongs.sort((a, b) => b.likes.length - a.likes.length);
+
+        res.status(200).send(songsByLikes);
+    }
+    catch (error)
+    {
+        res.status(401).send(error);
+    }
+}
+
 async function getSong(req, res)
 {
     // Because of `activatedRoute.snapshot.params[`songId`]` we send a params and not a body property
@@ -64,4 +80,21 @@ async function getSong(req, res)
     }
 }
 
-export default { getAllSongs, createSong, getSong };
+async function updateSong(req, res)
+{
+    const { songId } = req.params;
+    const { name, genres, band, length } = req.body;
+
+    try
+    {
+        const updatedSong = await Song.findByIdAndUpdate({ _id: songId }, { name, genres, band, length }, { runValidators: true, new: true });
+
+        res.status(200).send(updatedSong);
+    }
+    catch (error)
+    {
+        res.status(401).send(error);
+    }
+}
+
+export default { getAllSongs, getAllSongsByLikes, createSong, getSong, updateSong };

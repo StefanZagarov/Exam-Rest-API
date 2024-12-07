@@ -56,6 +56,22 @@ async function getAllBands(req, res, next, filter = ``)
     }
 }
 
+async function getAllBandsByLikes(req, res, next, filter = ``)
+{
+    try
+    {
+        const allBands = await Band.find().populate(`createdBy`);
+
+        const bandsByLikes = allBands.sort((a, b) => b.likes.length - a.likes.length);
+
+        res.status(200).send(bandsByLikes);
+    }
+    catch (error)
+    {
+        res.status(401).send(error);
+    }
+}
+
 async function getBand(req, res)
 {
     // Because of `activatedRoute.snapshot.params[`bandId`]` we send a params and not a body property
@@ -72,12 +88,56 @@ async function getBand(req, res)
     }
 }
 
-// function capitalizeWord(input)
-// {
-//     return input
-//         .split(' ')
-//         .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-//         .join(' ');
-// }
+async function updateBand(req, res)
+{
+    const { bandId } = req.params;
+    const { name, origin, genres, members, description } = req.body;
 
-export default { getAllBands, createBand, getBand };
+    try
+    {
+        await Band.findByIdAndUpdate({ _id: bandId }, { name, origin, genres, members, description }, { runValidators: true, new: true });
+
+        res.status(200).end();
+    }
+    catch (error)
+    {
+        res.status(401).send(error);
+    }
+}
+
+async function likeBand(req, res)
+{
+    const { bandId } = req.params;
+    const { userId } = req.body;
+
+    try
+    {
+        await Band.findByIdAndUpdate(bandId, { $push: { likes: userId } });
+
+        res.status(200).end();
+    }
+    catch (error)
+    {
+        res.status(401).end();
+    }
+}
+
+async function unlikeBand(req, res)
+{
+    const { bandId } = req.params;
+    const { userId } = req.body;
+
+    try
+    {
+        await Band.findByIdAndUpdate(bandId, { $pull: { likes: userId } });
+
+        res.status(200).end();
+    }
+    catch (error)
+    {
+        console.log(error);
+        res.status(401).end();
+    }
+}
+
+export default { getAllBands, getAllBandsByLikes, createBand, getBand, updateBand, likeBand, unlikeBand };
