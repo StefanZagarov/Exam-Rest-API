@@ -1,11 +1,12 @@
 import { AUTH_COOKIE_NAME, JWT_SECRET } from "../constants.js";
 import Song from "../models/Song.js";
 import jwt from 'jsonwebtoken';
+import Comment from "../models/Comment.js";
 
 
 async function createSong(req, res)
 {
-    let { name, genres, band, length } = req.body;
+    let { albumImage, name, genres, band, length } = req.body;
 
     try
     {
@@ -14,8 +15,8 @@ async function createSong(req, res)
         const token = req.cookies[AUTH_COOKIE_NAME];
         const decodedToken = jwt.verify(token, JWT_SECRET);
 
-        let newSong = await Song.create({ name, genres, band, length, createdBy: decodedToken._id, likes: [] });
-        console.log(newSong);
+        let newSong = await Song.create({ albumImage, name, genres, band, length, createdBy: decodedToken._id, likes: [] });
+
         res.status(200).send(newSong);
     }
     catch (error)
@@ -71,11 +72,16 @@ async function getSong(req, res)
 
     try
     {
-        const song = await Song.findById(songId).populate(`createdBy`);
+        const song = await Song.findById(songId).populate(`createdBy`).populate(`comments`).populate({
+            path: `comments`,
+            populate: { path: `creator` }
+        });
+
         res.status(200).send(song);
     }
     catch (error)
     {
+        console.log(error);
         res.status(401).send(error);
     }
 }
@@ -83,11 +89,21 @@ async function getSong(req, res)
 async function updateSong(req, res)
 {
     const { songId } = req.params;
-    const { name, genres, band, length } = req.body;
+    const { albumImage, name, genres, band, length } = req.body;
+    let updatedSong = {};
 
     try
     {
-        const updatedSong = await Song.findByIdAndUpdate({ _id: songId }, { name, genres, band, length }, { runValidators: true, new: true });
+        const song = await Song.findById(songId);
+
+        if (song.name !== name)
+        {
+            updatedSong = await Song.findByIdAndUpdate({ _id: songId }, { albumImage, name, genres, band, length, likes: [] }, { runValidators: true, new: true });
+        }
+        else
+        {
+            updatedSong = await Song.findByIdAndUpdate({ _id: songId }, { albumImage, name, genres, band, length }, { runValidators: true, new: true });
+        }
 
         res.status(200).send(updatedSong);
     }
@@ -97,4 +113,90 @@ async function updateSong(req, res)
     }
 }
 
-export default { getAllSongs, getAllSongsByLikes, createSong, getSong, updateSong };
+async function likeSong(req, res)
+{
+    const { songId } = req.params;
+    const { userId } = req.body;
+
+    try
+    {
+        await Song.findByIdAndUpdate(songId, { $push: { likes: userId } });
+
+        res.status(200).end();
+    }
+    catch (error)
+    {
+        res.status(401).end();
+    }
+}
+
+async function unlikeSong(req, res)
+{
+    const { songId } = req.params;
+    const { userId } = req.body;
+
+    try
+    {
+        await Song.findByIdAndUpdate(songId, { $pull: { likes: userId } });
+
+        res.status(200).end();
+    }
+    catch (error)
+    {
+        res.status(401).end();
+    }
+}
+
+async function addComment(req, res)
+{
+    const { songId } = req.params;
+    const { comment } = req.body;
+
+    try
+    {
+        const commentModel = await Comment.create(comment);
+
+        // await Song.findByIdAndUpdate(songId, { $push: { comments: commentModel } });
+        await Song.findByIdAndUpdate(songId, { $push: { comments: { $each: [commentModel], $position: 0 } } });
+
+        res.status(200).end();
+    }
+    catch (error)
+    {
+        res.status(401).end();
+    }
+}
+
+async function deleteComment(req, res)
+{
+    const { songId, commentId } = req.params;
+
+    try
+    {
+        await Song.findByIdAndUpdate(songId, { $pull: { comments: commentId } });
+
+        res.status(200).end();
+    }
+    catch (error)
+    {
+        res.status(401).end();
+    }
+}
+
+async function deleteSong(req, res)
+{
+    const { songId } = req.params;
+
+    try 
+    {
+        await Song.findByIdAndDelete(songId);
+
+        res.status(200).end();
+    }
+    catch (error)
+    {
+        res.status(401).end();
+    }
+}
+
+export default { getAllSongs, getAllSongsByLikes, createSong, getSong, updateSong, likeSong, unlikeSong, addComment, deleteComment, deleteSong };

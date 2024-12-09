@@ -1,11 +1,12 @@
 import { AUTH_COOKIE_NAME, JWT_SECRET } from "../constants.js";
 import Band from "../models/Band.js";
 import jwt from 'jsonwebtoken';
+import Comment from "../models/Comment.js";
 
 
 async function createBand(req, res)
 {
-    let { name, origin, genres, members, description } = req.body;
+    let { bandImage, name, origin, genres, members, description } = req.body;
 
     try
     {
@@ -22,7 +23,7 @@ async function createBand(req, res)
         const token = req.cookies[AUTH_COOKIE_NAME];
         const decodedToken = jwt.verify(token, JWT_SECRET);
 
-        let newBand = await Band.create({ name, origin, genres, members, description, createdBy: decodedToken._id, likes: [] });
+        let newBand = await Band.create({ bandImage, name, origin, genres, members, description, createdBy: decodedToken._id, likes: [], comments: [] });
 
         res.status(200).send(newBand);
     }
@@ -79,7 +80,10 @@ async function getBand(req, res)
 
     try
     {
-        const band = await Band.findById(bandId).populate(`createdBy`);
+        const band = await Band.findById(bandId).populate(`createdBy`).populate(`comments`).populate({
+            path: `comments`,
+            populate: { path: `creator` }
+        });;
         res.status(200).send(band);
     }
     catch (error)
@@ -92,10 +96,20 @@ async function updateBand(req, res)
 {
     const { bandId } = req.params;
     const { name, origin, genres, members, description } = req.body;
+    let updatedBand = {};
 
     try
     {
-        await Band.findByIdAndUpdate({ _id: bandId }, { name, origin, genres, members, description }, { runValidators: true, new: true });
+        const band = await Band.findById(bandId);
+
+        if (band.name !== name)
+        {
+            updatedBand = await Band.findByIdAndUpdate({ _id: bandId }, { name, origin, genres, members, description, likes: [] }, { runValidators: true, new: true });
+        }
+        else
+        {
+            updatedBand = await Band.findByIdAndUpdate({ _id: bandId }, { name, origin, genres, members, description }, { runValidators: true, new: true });
+        }
 
         res.status(200).end();
     }
@@ -135,9 +149,60 @@ async function unlikeBand(req, res)
     }
     catch (error)
     {
+        res.status(401).end();
+    }
+}
+
+async function addComment(req, res)
+{
+    const { bandId } = req.params;
+    const { comment } = req.body;
+
+    try
+    {
+        const commentModel = await Comment.create(comment);
+
+        await Band.findByIdAndUpdate(bandId, { $push: { comments: { $each: [commentModel], $position: 0 } } });
+
+        res.status(200).end();
+    }
+    catch (error)
+    {
         console.log(error);
         res.status(401).end();
     }
 }
 
-export default { getAllBands, getAllBandsByLikes, createBand, getBand, updateBand, likeBand, unlikeBand };
+async function deleteComment(req, res)
+{
+    const { bandId, commentId } = req.params;
+
+    try
+    {
+        await Band.findByIdAndUpdate(bandId, { $pull: { comments: commentId } });
+
+        res.status(200).end();
+    }
+    catch (error)
+    {
+        res.status(401).end();
+    }
+}
+
+async function deleteBand(req, res)
+{
+    const { bandId } = req.params;
+
+    try 
+    {
+        await Band.findByIdAndDelete(bandId);
+
+        res.status(200).end();
+    }
+    catch (error)
+    {
+        res.status(401).end();
+    }
+}
+
+export default { getAllBands, getAllBandsByLikes, createBand, getBand, updateBand, likeBand, unlikeBand, addComment, deleteComment, deleteBand };

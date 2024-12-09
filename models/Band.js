@@ -1,6 +1,7 @@
 import { Schema, Types, model } from 'mongoose';
 
 const bandSchema = new Schema({
+    bandImage: String,
     name: {
         type: String,
         required: true,
@@ -29,6 +30,10 @@ const bandSchema = new Schema({
     likes: [{
         type: Types.ObjectId,
         ref: `User`
+    }],
+    comments: [{
+        type: Types.ObjectId,
+        ref: `Comment`
     }]
 });
 

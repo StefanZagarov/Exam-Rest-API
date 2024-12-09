@@ -1,6 +1,7 @@
 import { model, Types, Schema } from 'mongoose';
 
 const songSchema = new Schema({
+    albumImage: String,
     name: {
         type: String,
         required: true
@@ -25,6 +26,10 @@ const songSchema = new Schema({
     likes: [{
         type: Types.ObjectId,
         ref: `User`
+    }],
+    comments: [{
+        type: Types.ObjectId,
+        ref: `Comment`
     }]
 });
 
