@@ -12,5 +12,7 @@ router.post(`/:songId/unlike`, songsController.unlikeSong);
 router.post(`/:songId/comment`, songsController.addComment);
 router.delete(`/:songId/:commentId`, songsController.deleteComment);
 router.delete(`/:songId/`, songsController.deleteSong);
+router.get(`/:userId/created-songs`, songsController.getCreatedSongs);
+router.get(`/:userId/liked-songs`, songsController.getLikedSongs);
 
 export default router;

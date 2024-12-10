@@ -198,4 +198,36 @@ async function deleteSong(req, res)
     }
 }
 
-export default { getAllSongs, getAllSongsByLikes, createSong, getSong, updateSong, likeSong, unlikeSong, addComment, deleteComment, deleteSong };
+async function getCreatedSongs(req, res)
+{
+    const { userId } = req.params;
+
+    try
+    {
+        const found = await Song.find({ createdBy: userId });
+
+        res.status(200).send(found);
+    }
+    catch (error)
+    {
+        res.status(409).end;
+    }
+}
+
+async function getLikedSongs(req, res)
+{
+    const { userId } = req.params;
+
+    try
+    {
+        const found = await Song.find({ likes: userId });
+
+        res.status(200).send(found);
+    }
+    catch (error)
+    {
+        res.status(409).end();
+    }
+}
+
+export default { getAllSongs, getAllSongsByLikes, createSong, getSong, updateSong, likeSong, unlikeSong, addComment, deleteComment, deleteSong, getCreatedSongs, getLikedSongs };

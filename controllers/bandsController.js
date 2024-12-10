@@ -205,4 +205,36 @@ async function deleteBand(req, res)
     }
 }
 
-export default { getAllBands, getAllBandsByLikes, createBand, getBand, updateBand, likeBand, unlikeBand, addComment, deleteComment, deleteBand };
+async function getCreatedBands(req, res)
+{
+    const { userId } = req.params;
+
+    try
+    {
+        const found = await Band.find({ createdBy: userId });
+
+        res.status(200).send(found);
+    }
+    catch (error)
+    {
+        res.status(409).end;
+    }
+}
+
+async function getLikedBands(req, res)
+{
+    const { userId } = req.params;
+
+    try
+    {
+        const found = await Band.find({ likes: userId });
+
+        res.status(200).send(found);
+    }
+    catch (error)
+    {
+        res.status(409).end();
+    }
+}
+
+export default { getAllBands, getAllBandsByLikes, createBand, getBand, updateBand, likeBand, unlikeBand, addComment, deleteComment, deleteBand, getCreatedBands, getLikedBands };

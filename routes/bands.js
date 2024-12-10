@@ -12,5 +12,7 @@ router.post(`/:bandId/unlike`, bandsController.unlikeBand);
 router.post(`/:bandId/comment`, bandsController.addComment);
 router.delete(`/:bandId/:commentId`, bandsController.deleteComment);
 router.delete(`/:bandId/`, bandsController.deleteBand);
+router.get(`/:userId/created-bands`, bandsController.getCreatedBands);
+router.get(`/:userId/liked-bands`, bandsController.getLikedBands);
 
 export default router;
