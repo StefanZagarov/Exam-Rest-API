@@ -21,7 +21,7 @@ async function createSong(req, res)
     }
     catch (error)
     {
-        res.status(401).send(error);
+        res.status(409).send(error);
     }
 }
 
@@ -45,7 +45,7 @@ async function getAllSongs(req, res, next, filter = ``)
     }
     catch (error)
     {
-        res.status(401).send(error);
+        res.status(409).send(error);
     }
 }
 
@@ -61,7 +61,7 @@ async function getAllSongsByLikes(req, res, next, filter = ``)
     }
     catch (error)
     {
-        res.status(401).send(error);
+        res.status(409).send(error);
     }
 }
 
@@ -81,8 +81,7 @@ async function getSong(req, res)
     }
     catch (error)
     {
-        console.log(error);
-        res.status(401).send(error);
+        res.status(409).send(error);
     }
 }
 
@@ -109,7 +108,7 @@ async function updateSong(req, res)
     }
     catch (error)
     {
-        res.status(401).send(error);
+        res.status(409).send(error);
     }
 }
 
@@ -126,7 +125,7 @@ async function likeSong(req, res)
     }
     catch (error)
     {
-        res.status(401).end();
+        res.status(409).end();
     }
 }
 
@@ -143,7 +142,7 @@ async function unlikeSong(req, res)
     }
     catch (error)
     {
-        res.status(401).end();
+        res.status(409).end();
     }
 }
 
@@ -163,7 +162,7 @@ async function addComment(req, res)
     }
     catch (error)
     {
-        res.status(401).end();
+        res.status(409).end();
     }
 }
 
@@ -179,7 +178,7 @@ async function deleteComment(req, res)
     }
     catch (error)
     {
-        res.status(401).end();
+        res.status(409).end();
     }
 }
 
@@ -195,7 +194,7 @@ async function deleteSong(req, res)
     }
     catch (error)
     {
-        res.status(401).end();
+        res.status(409).end();
     }
 }
 

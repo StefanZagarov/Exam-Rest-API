@@ -14,13 +14,13 @@ async function register(req, res)
 
         if (user)
         {
-            res.status(409).send(`This username or email is already registered!`);
+            res.status(409).send({ message: `This username or email is already registered!` });
             return;
         }
 
         if (password !== rePassword)
         {
-            res.status(409).send(`Password mismatch!`);
+            res.status(409).send({ message: `Password mismatch!` });
             return;
         }
 
@@ -48,7 +48,7 @@ async function login(req, res)
 
         if (!user)
         {
-            res.status(401).send('Wrong username or password');
+            res.status(401).send({ message: 'Wrong username or password' });
             return;
         }
 
@@ -56,7 +56,7 @@ async function login(req, res)
 
         if (!isValidPassword)
         {
-            res.status(401).send('Wrong username or password');
+            res.status(401).send({ message: 'Wrong username or password' });
             return;
         }
 
@@ -68,7 +68,6 @@ async function login(req, res)
     }
     catch (error)
     {
-        console.log(error);
         res.send(error);
     }
 }

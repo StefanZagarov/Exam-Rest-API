@@ -29,7 +29,7 @@ async function createBand(req, res)
     }
     catch (error)
     {
-        res.status(401).send(error);
+        res.status(409).send(error);
     }
 }
 
@@ -53,7 +53,7 @@ async function getAllBands(req, res, next, filter = ``)
     }
     catch (error)
     {
-        res.status(401).send(error);
+        res.status(409).send(error);
     }
 }
 
@@ -69,7 +69,7 @@ async function getAllBandsByLikes(req, res, next, filter = ``)
     }
     catch (error)
     {
-        res.status(401).send(error);
+        res.status(409).send(error);
     }
 }
 
@@ -88,7 +88,7 @@ async function getBand(req, res)
     }
     catch (error)
     {
-        res.status(401).send(error);
+        res.status(409).send(error);
     }
 }
 
@@ -115,7 +115,7 @@ async function updateBand(req, res)
     }
     catch (error)
     {
-        res.status(401).send(error);
+        res.status(409).send(error);
     }
 }
 
@@ -132,7 +132,7 @@ async function likeBand(req, res)
     }
     catch (error)
     {
-        res.status(401).end();
+        res.status(409).end();
     }
 }
 
@@ -149,7 +149,7 @@ async function unlikeBand(req, res)
     }
     catch (error)
     {
-        res.status(401).end();
+        res.status(409).end();
     }
 }
 
@@ -169,7 +169,7 @@ async function addComment(req, res)
     catch (error)
     {
         console.log(error);
-        res.status(401).end();
+        res.status(409).end();
     }
 }
 
@@ -185,7 +185,7 @@ async function deleteComment(req, res)
     }
     catch (error)
     {
-        res.status(401).end();
+        res.status(409).end();
     }
 }
 
@@ -201,7 +201,7 @@ async function deleteBand(req, res)
     }
     catch (error)
     {
-        res.status(401).end();
+        res.status(409).end();
     }
 }
 
