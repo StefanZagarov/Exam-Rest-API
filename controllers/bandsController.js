@@ -18,7 +18,7 @@ async function createBand(req, res)
             return;
         }
 
-        // TODO: Maybe change to getting req.user._id after implementing auth middleware
+        // TODO: Change to getting req.user._id after implementing auth middleware
         // Get user by cookie
         const token = req.cookies[AUTH_COOKIE_NAME];
         const decodedToken = jwt.verify(token, JWT_SECRET);

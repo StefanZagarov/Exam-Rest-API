@@ -95,14 +95,10 @@ function generateToken(user)
     return token;
 }
 
-// Acts as both user details page, and updating the navbar on page refresh 
 async function getUserProfile(req, res)
 {
     const token = req.cookies[AUTH_COOKIE_NAME];
 
-    // Send status 401 so maybe we will redirect to the login page if there is no user (cookie)
-    // if (!token) res.status(401).send();
-    // For now just end the request without status of 401 so it doesnt go to error page
     if (!token) return res.send();
 
     const decodedToken = jwt.verify(token, JWT_SECRET);
