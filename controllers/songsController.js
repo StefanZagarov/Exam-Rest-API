@@ -49,7 +49,7 @@ async function getAllSongs(req, res, next, filter = ``)
     }
 }
 
-async function getAllSongsByLikes(req, res, next, filter = ``)
+async function getAllSongsByLikes(req, res,)
 {
     try
     {
