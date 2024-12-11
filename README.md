@@ -11,7 +11,7 @@ When extracting the files on Windows, it may say something about the `file being
 
 Another problem could be that after installing the dependencies and running the program, it can give `Error: ...bcrypt_lib.node is not a valid Win32 application.`
 To fix that follow those steps:
-1. Delete the node_modules folder 
+1. Delete the `node_modules` folder 
 2. `npm install node-pre-gyp -g` 
 3. `npm rebuild bcrypt --build-from-source` 
 4. `npm install bcrypt` 
