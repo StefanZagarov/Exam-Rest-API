@@ -5,7 +5,10 @@
 2. Then write `npm start`
 
 ## Note - errors
-When extracting the files on Windows, it may say something about the file being invalid or too long. Skipping those files is fine. This may be caused because this API has been developed on Linux
+Those erros may be caused on Windows because the software was developed on Linux
+
+When extracting the files on Windows, it may say something about the `file being invalid or too long`. Skipping those files is fine. 
+
 Another problem could be that after installing the dependencies and running the program, it can give `Error: ...bcrypt_lib.node is not a valid Win32 application.`
 To fix that follow those steps:
 1. Delete the node_modules folder 
